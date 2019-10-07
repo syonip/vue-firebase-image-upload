@@ -5,7 +5,12 @@
 </template>
 
 <script>
+import cloudStorage from './services/cloud-storage'
+
 export default {
-  name: 'App'
+  name: 'App',
+  mounted() {
+    cloudStorage.initialize();
+  }
 }
 </script>
