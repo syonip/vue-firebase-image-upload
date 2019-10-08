@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Vue Firebase cloud storage image uploading app",
   "productName": "Photo Uploader",
-  "cordovaId": "org.cordova.quasar.app",
+  "cordovaId": "com.learningsomethingnew.imageupload",
   "author": "Johnny <syonip@gmail.com>",
   "private": true,
   "scripts": {
