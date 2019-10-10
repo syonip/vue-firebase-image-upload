@@ -15,8 +15,6 @@ async function uploadBase64(imageData, storageId) {
                 uploadTask.snapshot.ref
                     .getDownloadURL()
                     .then(function (downloadURL) {
-                        console.log("Uploaded a blob or file!");
-                        console.log("got downloadURL: ", downloadURL);
                         resolve(downloadURL);
                     });
             }
