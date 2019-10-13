@@ -1,42 +1,90 @@
 <template>
-  <q-page>
-    <div class="row justify-center q-ma-md" v-for="(pic, idx) in pics" :key="idx">
-      <div class="col">
-        <q-card>
-          <q-img spinner-color="white" :src="pic" />
-        </q-card>
+  <q-page class>
+    <div class="q-pa-md">
+      <div class="row justify-center q-ma-md" v-for="(pic, idx) in pics" :key="idx">
+        <div class="col">
+          <q-card v-if="pic">
+            <q-img spinner-color="white" :src="pic.url">
+              <div class="spinner-container" v-if="pic.uploading && !pic.failed">
+                <q-spinner color="white" size="4em" />
+              </div>
+              <div class="spinner-container" v-if="pic.failed">
+                <q-icon name="cloud_off" style="font-size: 48px;"></q-icon>
+              </div>
+            </q-img>
+            <q-card-actions align="around">
+              <q-btn flat round color="red" icon="favorite" @click="notifyNotImplemented()" />
+              <q-btn flat round color="teal" icon="bookmark" @click="notifyNotImplemented()" />
+              <q-btn
+                flat
+                round
+                color="primary"
+                icon="delete"
+                @click="deletePic(idx)"
+                :disable="pic.uploading"
+              />
+            </q-card-actions>
+          </q-card>
+        </div>
       </div>
     </div>
   </q-page>
 </template>
 
+<style scoped>
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+</style>
+
 <script>
+import store from "../services/store";
 import { EventBus } from "../services/event-bus";
-import cordovaCamera from "../services/cordova-camera";
-import cloudStorage from "../services/cloud-storage";
+import imageUploader from "../services/image-uploader";
 
 export default {
   name: "PageIndex",
   data() {
     return {
-      pics: []
+      state: store.state
     };
   },
   mounted() {
     EventBus.$off("takePicture");
     EventBus.$on("takePicture", this.uploadImageFromCamera);
   },
+  computed: {
+    pics() {
+      return this.state.pics;
+    }
+  },
   methods: {
-    removeBase64Prefix(base64Str) {
-      return base64Str.substr(base64Str.indexOf(",") + 1);
+    notifyNotImplemented() {
+      this.$q.notify({ message: "Not implemented yet :/" });
     },
-
+    async deletePic(idx) {
+      try {
+        await store.deletePic(idx);
+        this.$q.notify({ message: "Picture deleted." });
+      } catch (err) {
+        console.error(err);
+        this.$q.notify({ message: "Delete failed. Check log." });
+      }
+    },
     async uploadImageFromCamera() {
-      const base64 = await cordovaCamera.getBase64FromCamera();
-      const imageData = this.removeBase64Prefix(base64);
-      const storageId = new Date().getTime().toString();
-      const uploadedPic = await cloudStorage.uploadBase64(imageData, storageId);
-      this.pics.push(uploadedPic);
+      try {
+        imageUploader.uploadImageFromCamera();
+      } catch (err) {
+        console.error("Uploading failed");
+        console.dir(err);
+        store.updatePicFailed(localPic);
+        this.$q.notify({ message: "Uploading failed. Check log." });
+      }
     }
   }
 };

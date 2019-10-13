@@ -62,7 +62,15 @@ module.exports = function (ctx) {
       // extractCSS: false,
 
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack
-      extendWebpack (cfg) {
+      extendWebpack(cfg) {
+        cfg.module.rules.push({
+          test: /\.worker\.js$/,
+          loader: 'workerize-loader',
+        })
+      },
+
+      chainWebpack (chain, { isServer, isClient }) {
+        chain.output.globalObject('self')
       }
     },
 

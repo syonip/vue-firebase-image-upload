@@ -15,11 +15,18 @@ async function uploadBase64(imageData, storageId) {
                 uploadTask.snapshot.ref
                     .getDownloadURL()
                     .then(function (downloadURL) {
+                        console.log("Uploaded a blob or file!");
+                        console.log("got downloadURL: ", downloadURL);
                         resolve(downloadURL);
                     });
             }
         );
     });
+}
+
+async function deleteFromStorage(storageId) {
+    console.log(`deleting /${storageId}`)
+    await firebase.storage().ref().child(storageId).delete()
 }
 
 function initialize() {
@@ -28,5 +35,6 @@ function initialize() {
 
 export default {
     uploadBase64,
+    deleteFromStorage,
     initialize
 }

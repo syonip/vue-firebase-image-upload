@@ -5,12 +5,16 @@
 </template>
 
 <script>
-import cloudStorage from './services/cloud-storage'
+import store from "./services/store.js";
 
 export default {
-  name: 'App',
-  mounted() {
-    cloudStorage.initialize();
+  name: "App",
+  async mounted() {
+    store.initWorker();
+    store.loadPictures();
   }
-}
+};
 </script>
+
+<style>
+</style>

@@ -1,3 +1,4 @@
+import config from "./config";
 
 async function getCameraFileObject() {
   return new Promise((resolve, reject) => {
@@ -10,7 +11,8 @@ async function getCameraFileObject() {
       encodingType: camera.EncodingType.JPG,
       mediaType: camera.MediaType.PICTURE,
       saveToPhotoAlbum: true,
-      correctOrientation: true
+      correctOrientation: true,
+      targetWidth: config.photos.maxWidth
     };
 
     camera.getPicture(imageURI => {
